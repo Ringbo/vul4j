@@ -175,6 +175,10 @@ def checkout(vul_id: str, project_dir: str, force: bool = False) -> None:
     # check if vul4j git has a branch for the vulnerability
     repo = git.Repo(VUL4J_GIT)
     clone = vul_id not in set(branch.name.split('/')[-1] for branch in repo.refs)
+    if clone is True and vul_id + "-S" in set(branch.name.split('/')[-1] for branch in repo.refs):
+        clone = False
+        vul_id = vul_id + "-S"
+        vul.vul_id = vul_id
 
     project_clone = os.path.join(TEMP_CLONE_DIR, vul_id)
     if clone:
@@ -259,6 +263,24 @@ def build(project_dir: str, suffix: str = None, clean: bool = False) -> None:
     log_output = open(log_path, "w", encoding="utf-8") if LOG_TO_FILE else subprocess.DEVNULL
 
     logger.info("Compiling...")
+    ret = subprocess.run(compile_cmd,
+                   shell=True,
+                   stdout=log_output,
+                   stderr=subprocess.STDOUT,
+                   cwd=project_dir,
+                   env=env,
+                   check=False)
+    
+    if ret.returncode != 0:
+        logger.info("Failed to compile whole project. Fallback to compile failing module only...")
+
+    failing_module = vul.failing_module
+    if failing_module != "root" and failing_module != "" and vul.build_system == "Maven":
+        compile_cmd = vul.compile_cmd + f" -pl {failing_module}" +" " + vul.cmd_options
+    else:
+        compile_cmd = vul.compile_cmd + " " + vul.cmd_options
+
+    logger.debug(compile_cmd)
     subprocess.run(compile_cmd,
                    shell=True,
                    stdout=log_output,
@@ -266,7 +288,6 @@ def build(project_dir: str, suffix: str = None, clean: bool = False) -> None:
                    cwd=project_dir,
                    env=env,
                    check=True)
-
 
 def apply(project_dir: str, version: str, quiet: bool = False) -> None:
     """
