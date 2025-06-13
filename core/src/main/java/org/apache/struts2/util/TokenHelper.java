@@ -27,6 +27,7 @@ import com.opensymphony.xwork2.util.logging.Logger;
 import com.opensymphony.xwork2.util.logging.LoggerFactory;
 
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
 
