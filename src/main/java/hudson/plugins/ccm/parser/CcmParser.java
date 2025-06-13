@@ -24,6 +24,7 @@
 package hudson.plugins.ccm.parser;
 
 import hudson.plugins.analysis.core.AbstractAnnotationParser;
+import hudson.plugins.analysis.util.SecureDigester;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.util.model.Priority;
 
