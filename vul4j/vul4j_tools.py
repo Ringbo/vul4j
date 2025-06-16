@@ -270,20 +270,20 @@ def build(project_dir: str, suffix: str = None, clean: bool = False) -> None:
     if ret.returncode != 0:
         logger.info("Failed to compile whole project. Fallback to compile failing module only...")
 
-    failing_module = vul.failing_module
-    if failing_module != "root" and failing_module != "" and vul.build_system == "Maven":
-        compile_cmd = vul.compile_cmd + f" -pl {failing_module}" +" " + vul.cmd_options
-    else:
-        compile_cmd = vul.compile_cmd + " " + vul.cmd_options
-
-    logger.debug(compile_cmd)
-    subprocess.run(compile_cmd,
-                   shell=True,
-                   stdout=log_output,
-                   stderr=subprocess.STDOUT,
-                   cwd=project_dir,
-                   env=env,
-                   check=True)
+        failing_module = vul.failing_module
+        if failing_module != "root" and failing_module != "" and vul.build_system == "Maven":
+            compile_cmd = vul.compile_cmd + f" -pl {failing_module}" +" " + vul.cmd_options
+        else:
+            compile_cmd = vul.compile_cmd + " " + vul.cmd_options
+    
+        logger.debug(compile_cmd)
+        subprocess.run(compile_cmd,
+                       shell=True,
+                       stdout=log_output,
+                       stderr=subprocess.STDOUT,
+                       cwd=project_dir,
+                       env=env,
+                       check=True)
 
 def apply(project_dir: str, version: str, quiet: bool = False) -> None:
     """
