@@ -175,10 +175,6 @@ def checkout(vul_id: str, project_dir: str, force: bool = False) -> None:
     # check if vul4j git has a branch for the vulnerability
     repo = git.Repo(VUL4J_GIT)
     clone = vul_id not in set(branch.name.split('/')[-1] for branch in repo.refs)
-    if clone is True and vul_id + "-S" in set(branch.name.split('/')[-1] for branch in repo.refs):
-        clone = False
-        vul_id = vul_id + "-S"
-        vul.vul_id = vul_id
 
     project_clone = os.path.join(TEMP_CLONE_DIR, vul_id)
     if clone:
